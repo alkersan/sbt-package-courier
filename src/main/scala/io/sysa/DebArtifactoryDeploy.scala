@@ -7,7 +7,9 @@ import com.typesafe.sbt.SbtNativePackager._
 import com.typesafe.sbt.packager.Keys._
 import com.typesafe.sbt.packager.debian.DebianPlugin
 
+import java.io.FileInputStream
 import java.net.HttpURLConnection
+import java.security.MessageDigest
 import javax.xml.bind.DatatypeConverter.printBase64Binary
 
 
@@ -37,7 +39,7 @@ object DebArtifactoryDeployPlugin extends AutoPlugin {
   import autoImport._
 
   override def projectSettings = inConfig(Debian)(Seq(
-    debianArtifactoryPublishName := (packageName in Debian).value + "_" + version.value + "_" +(packageArchitecture in Debian).value + ".deb",
+    debianArtifactoryPublishName := (packageName in Debian).value + "_" + version.value + "_" + (packageArchitecture in Debian).value + ".deb",
     debianArtifactoryArchitecture := Seq((packageArchitecture in Debian).value),
     debianArtifactoryTargetPath <<= (debianArtifactoryPublishName, debianArtifactoryPath, debianArtifactoryDistribution, debianArtifactoryComponent, debianArtifactoryArchitecture) map makeTargetPath,
     debianArtifactoryPublish <<= (debianArtifactoryUrl, debianArtifactoryRepo, debianArtifactoryTargetPath, packageBin in Debian, debianArtifactoryCredentials, streams) map publishToArtifactory
@@ -69,6 +71,10 @@ object DebArtifactoryDeployPlugin extends AutoPlugin {
         connection.setRequestProperty("Authorization", authHeader)
     }
 
+    streams.log.info(s"Calculating checksums")
+    connection.setRequestProperty("X-Checksum-Md5", pkgChecksum("MD5", pkg))
+    connection.setRequestProperty("X-Checksum-Sha1", pkgChecksum("SHA-1", pkg))
+
     streams.log.info(s"Publishing package ${pkg.name} to $putTo")
 
     connection.connect()
@@ -84,5 +90,13 @@ object DebArtifactoryDeployPlugin extends AutoPlugin {
       streams.log.error(s"Publish failed: ${connection.getResponseMessage}")
     }
     connection.disconnect()
+  }
+
+  private def pkgChecksum(algo: String, pkg: File): String = {
+    val md = MessageDigest.getInstance(algo)
+    val input = new FileInputStream(pkg)
+    val buffer = new Array[Byte](1024)
+    Stream.continually(input.read(buffer)).takeWhile(_ != -1).foreach(md.update(buffer, 0, _))
+    md.digest.map("%02X" format _).mkString
   }
 }

@@ -2,6 +2,7 @@ sbtPlugin := true
 
 name := "sbt-package-courier"
 organization := "io.sysa"
+version := "0.1-SNAPSHOT"
 
 scalaVersion in Global := "2.10.5"
 scalacOptions in Compile ++= Seq("-deprecation", "-target:jvm-1.7")
