@@ -7,6 +7,13 @@ Requirements
 - [`sbt-native-packager`](https://github.com/sbt/sbt-native-packager) - latest stable release `1.0.6` linked transitively, but should work with higher versions too
 - [`Artifactory Pro 4.+`](https://www.jfrog.com/artifactory/) with configured `apt` or `yum` repository
 
+Setup
+-----
+Add plugin dependency to `project/plugins.sbt`:
+```scala
+addSbtPlugin("io.sysa" % "sbt-package-courier" % "0.1.0")
+```
+
 Usage
 -----
 #### Deb publishing
