@@ -14,8 +14,8 @@ import javax.xml.bind.DatatypeConverter.printBase64Binary
 
 
 trait DebArtifactoryDeployKeys {
-  val debianArtifactoryUrl = SettingKey[String]("debian-artifactory-url", " Url of Atrifactory server")
-  val debianArtifactoryRepo = SettingKey[String]("debian-artifactory-repo", "Name of Artifactory repository with deb layout to publish artifacts to")
+  val debianArtifactoryUrl = SettingKey[Option[String]]("debian-artifactory-url", " Url of Atrifactory server")
+  val debianArtifactoryRepo = SettingKey[Option[String]]("debian-artifactory-repo", "Name of Artifactory repository with deb layout to publish artifacts to")
   val debianArtifactoryCredentials = SettingKey[Option[Credentials]]("debian-artifactory-credentials", "Credentials with permissions to publish to Artifactory server")
 
   val debianArtifactoryPath = SettingKey[String]("debian-artifactory-path", "Path in repository where the package should be stored (e.g. pool)")
@@ -52,7 +52,15 @@ object DebArtifactoryDeployPlugin extends AutoPlugin {
     (s"$repoPath/$name" +: dists ++: comps ++: archs).mkString(";")
   }
 
-  private def publishToArtifactory(artUrl: String, repo: String, targetPath: String, pkg: File, creds: Option[Credentials], streams: TaskStreams): Unit = {
+  private def publishToArtifactory(maybeArtUrl: Option[String], maybeRepo: Option[String], targetPath: String, pkg: File, creds: Option[Credentials], streams: TaskStreams): Unit = {
+    val artUrl = maybeArtUrl getOrElse {
+      sys.error("No artifactoryUrl set!")
+    }
+
+    val repo = maybeRepo getOrElse {
+      sys.error("No artifactoryRepo set!")
+    }
+
     val putTo = uri(s"$artUrl/$repo/$targetPath").normalize().toURL
 
     val connection = putTo.openConnection().asInstanceOf[HttpURLConnection]
