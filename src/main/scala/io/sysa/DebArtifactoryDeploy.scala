@@ -16,7 +16,7 @@ import javax.xml.bind.DatatypeConverter.printBase64Binary
 trait DebArtifactoryDeployKeys {
   val debianArtifactoryUrl = SettingKey[String]("debian-artifactory-url", " Url of Atrifactory server")
   val debianArtifactoryRepo = SettingKey[String]("debian-artifactory-repo", "Name of Artifactory repository with deb layout to publish artifacts to")
-  val debianArtifactoryCredentials = SettingKey[Option[Credentials]]("debian-artifactory-credentials", "Credentials with permissions to publish to Artifactory server")
+  val debianArtifactoryCredentials = TaskKey[Option[Credentials]]("debian-artifactory-credentials", "Credentials with permissions to publish to Artifactory server")
 
   val debianArtifactoryPath = SettingKey[String]("debian-artifactory-path", "Path in repository where the package should be stored (e.g. pool)")
   val debianArtifactoryPublishName = TaskKey[String]("debian-artifactory-package-name", "Final name package will be published with")
