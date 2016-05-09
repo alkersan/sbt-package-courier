@@ -16,7 +16,7 @@ import javax.xml.bind.DatatypeConverter.printBase64Binary
 trait RpmArtifactoryDeployKeys {
   val rpmArtifactoryUrl = SettingKey[String]("rpm-artifactory-url", " Url of Atrifactory server")
   val rpmArtifactoryRepo = SettingKey[String]("rpm-artifactory-repo", "Name of Artifactory repository with YUM layout to publish artifacts to")
-  val rpmArtifactoryCredentials = SettingKey[Option[Credentials]]("rpm-artifactory-credentials", "Credentials with permissions to publish to Artifactory server")
+  val rpmArtifactoryCredentials = TaskKey[Option[Credentials]]("rpm-artifactory-credentials", "Credentials with permissions to publish to Artifactory server")
 
   val rpmArtifactoryPath = SettingKey[String]("rpm-artifactory-path", "Path in repository where the package should be stored (e.g. pool)")
   val rpmArtifactoryPublishName = TaskKey[String]("rpm-artifactory-publish-name", "Final name package will be published with")

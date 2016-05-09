@@ -2,7 +2,7 @@ sbtPlugin := true
 
 name := "sbt-package-courier"
 organization := "io.sysa"
-version := "0.1.1-SNAPSHOT"
+version := "0.1.1"
 licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 
 scalaVersion in Global := "2.10.5"
