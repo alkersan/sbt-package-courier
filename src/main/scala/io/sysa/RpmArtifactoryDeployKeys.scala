@@ -43,7 +43,7 @@ object RpmArtifactoryDeployPlugin extends AutoPlugin {
 
     rpmArtifactoryRecalcMetadata := true,
 
-    rpmArtifactoryPublish <<= (rpmArtifactoryUrl, rpmArtifactoryRepo, rpmArtifactoryPath, rpmArtifactoryPublishName, packageBin in Rpm, rpmArtifactoryCredentials, rpmArtifactoryRecalcMetadata, streams) map publishToArtifactory
+    rpmArtifactoryPublish := publishToArtifactory(rpmArtifactoryUrl.value, rpmArtifactoryRepo.value, rpmArtifactoryPath.value, rpmArtifactoryPublishName.value, (packageBin in Rpm).value, rpmArtifactoryCredentials.value, rpmArtifactoryRecalcMetadata.value, streams.value)
   ))
 
   private def publishToArtifactory(artUrl: String, repo: String, path: String, name: String, pkg: File, creds: Option[Credentials], recalcMetadata: Boolean, streams: TaskStreams): Unit = {

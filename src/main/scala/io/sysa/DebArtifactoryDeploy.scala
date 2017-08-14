@@ -41,8 +41,8 @@ object DebArtifactoryDeployPlugin extends AutoPlugin {
   override def projectSettings = inConfig(Debian)(Seq(
     debianArtifactoryPublishName := (packageName in Debian).value + "_" + version.value + "_" + (packageArchitecture in Debian).value + ".deb",
     debianArtifactoryArchitecture := Seq((packageArchitecture in Debian).value),
-    debianArtifactoryTargetPath <<= (debianArtifactoryPublishName, debianArtifactoryPath, debianArtifactoryDistribution, debianArtifactoryComponent, debianArtifactoryArchitecture) map makeTargetPath,
-    debianArtifactoryPublish <<= (debianArtifactoryUrl, debianArtifactoryRepo, debianArtifactoryTargetPath, packageBin in Debian, debianArtifactoryCredentials, streams) map publishToArtifactory
+    debianArtifactoryTargetPath := makeTargetPath(debianArtifactoryPublishName.value, debianArtifactoryPath.value, debianArtifactoryDistribution.value, debianArtifactoryComponent.value, debianArtifactoryArchitecture.value),
+    debianArtifactoryPublish := publishToArtifactory(debianArtifactoryUrl.value, debianArtifactoryRepo.value, debianArtifactoryTargetPath.value, (packageBin in Debian).value, debianArtifactoryCredentials.value, streams.value)
   ))
 
   private def makeTargetPath(name: String, repoPath: String, distribution: Seq[String], component: Seq[String], arch: Seq[String]): String = {
