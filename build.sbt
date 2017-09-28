@@ -5,8 +5,6 @@ organization := "io.sysa"
 version := "0.2.0"
 licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 
-//scalaVersion in Global := "2.10.6"
-
 scalaVersion := (CrossVersion partialVersion (sbtVersion in pluginCrossBuild).value match {
   case Some((0, 13)) => "2.10.6"
   case Some((1, _))  => "2.12.3"
@@ -14,8 +12,6 @@ scalaVersion := (CrossVersion partialVersion (sbtVersion in pluginCrossBuild).va
 })
 
 crossSbtVersions := Vector("0.13.16", "1.0.0")
-
-//scalacOptions in Compile ++= Seq("-deprecation", "-target:jvm-1.7")
 
 scalacOptions ++= (CrossVersion partialVersion (sbtVersion in pluginCrossBuild).value match {
   case Some((0, 13)) => Seq("-deprecation", "-target:jvm-1.7")

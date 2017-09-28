@@ -4,22 +4,24 @@ Plugin to deliver native packages to artifact storage
 
 Requirements
 ------------
-- [`sbt-native-packager`](https://github.com/sbt/sbt-native-packager) - latest stable release `1.0.6` linked transitively, but should work with higher versions too
-- [`Artifactory Pro 4.+`](https://www.jfrog.com/artifactory/) with configured `apt` or `yum` repository
+- [`sbt-native-packager`](https://github.com/sbt/sbt-native-packager) - latest stable release `1.2.2` linked transitively, but should work with higher versions too
+- [`Artifactory Pro 4.+`](https://www.jfrog.com/artifactory/) with configured `deb` or `rpm` repository
 
 Setup
 -----
 Add plugin dependency to `project/plugins.sbt`:
 ```scala
-addSbtPlugin("io.sysa" % "sbt-package-courier" % "0.1.0")
+addSbtPlugin("io.sysa" % "sbt-package-courier" % "0.2.0")
 ```
 
 Usage
 -----
 #### Deb publishing
-Assuming that `sbt-native-packager` is configured to build `deb` packages, Artifactory is hosted at `https://repo.acme.corp/artifactory` and `apt` repository is called `apt-repo` possible definitions of setting keys can be:
+Assuming that `sbt-native-packager` is configured to build `deb` packages, Artifactory is hosted at `https://repo.acme.corp/artifactory` and `apt` repository is called `apt-repo`,
+the possible definitions of setting keys can be:
 
 ```scala
+enablePlugins(DebArtifactoryDeployPlugin)
 debianArtifactoryUrl in Debian := "https://repo.acme.corp/artifactory"
 debianArtifactoryCredentials in Debian := Some(Credentials(Path.userHome / ".ivy2" / ".credentials"))
 debianArtifactoryRepo in Debian := "apt-repo"
@@ -28,7 +30,7 @@ debianArtifactoryDistribution in Debian := Seq("debian", "ubuntu")
 debianArtifactoryComponent in Debian := Seq("main")
 debianArtifactoryArchitecture in Debian := Seq("i386", "amd64")
 
-publish in Debian <<= (debianArtifactoryPublish in Debian)
+publish in Debian := (debianArtifactoryPublish in Debian).value
 ```
 
 `Credentials` are optional, although by default Artifactory requires authentication for publishing.
@@ -37,22 +39,23 @@ Multiple values of `Distribution`, `Component`, `Architecture` can be specified,
 
 Then publishing is done with:
 ```shell
-> sbt deb:publish
+> sbt debian:publish
 ```
 
 #### Rpm publishing
-Assuming that `sbt-native-packager` is configured to build `rpm` packages, Artifactory is hosted at `https://repo.acme.corp/artifactory` and `yum` repository is called `yum-repo` possible definitions of setting keys can be:
+Assuming that `sbt-native-packager` is configured to build `rpm` packages, Artifactory is hosted at `https://repo.acme.corp/artifactory` and `rpm` repository is called `rpm-repo` possible definitions of setting keys can be:
 
 ```scala
+enablePlugins(RpmArtifactoryDeployPlugin)
 rpmArtifactoryUrl in Rpm := "https://repo.acme.corp/artifactory"
 rpmArtifactoryCredentials in Rpm := Some(Credentials(Path.userHome / ".ivy2" / ".credentials"))
-rpmArtifactoryRepo in Rpm := "yum-repo"
+rpmArtifactoryRepo in Rpm := "rpm-repo"
 rpmArtifactoryPath in Rpm := s"pool/${packageName.value}"
 
-publish in Rpm <<= (rpmArtifactoryPublish in Rpm)
+publish in Rpm := (rpmArtifactoryPublish in Rpm).value
 ```
 
-Be aware that correct nesting in `rpmArtifactoryPath` is critical for proper work of `yum` repo. Read more about [`repodata depth`](https://www.jfrog.com/confluence/display/RTF/YUM+Repositories#YUMRepositories-LocalRepositories)
+Be aware that correct nesting in `rpmArtifactoryPath` is critical for proper work of `rpm` repo. Read more about [`repodata depth`](https://www.jfrog.com/confluence/display/RTF/YUM+Repositories#YUMRepositories-LocalRepositories)
 
 Then publishing is done with:
 ```shell
